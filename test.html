@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FridgeMind - Test Expiry Reminder</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+    body { font-family: Arial, sans-serif; background: #f0f8ff; color: #333; }
+    .container { max-width: 700px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #006400; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background: #008000; color: white; }
+    .expired { color: red; font-weight: bold; }
+    .today { color: orange; font-weight: bold; }
+    .fresh { color: green; font-weight: bold; }
+    .delete-btn { text-decoration: none; color: white; background: red; padding: 5px 10px; border-radius: 6px; }
+    .delete-btn:hover { background: darkred; }
+    .add-form { margin-top: 20px; display: flex; justify-content: space-between; gap: 10px; }
+    .add-form input, .add-form button { padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+    .add-form button { background: #008000; color: white; border: none; cursor: pointer; }
+    .add-form button:hover { background: #006400; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>🥦 FridgeMind - Test Expiry Reminder 🍎</h1>
+
+    <!-- Add Item Form -->
+    <form action="{{ url_for('add_item') }}" method="post" class="add-form">
+        <input type="text" name="name" placeholder="Enter item name" required>
+        <input type="date" name="expiry" required>
+        <button type="submit">➕ Add Item</button>
+    </form>
+
+    <h2>📋 Items in Fridge</h2>
+    <table>
+        <tr>
+            <th>Item</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.expiry }}</td>
+            <td>
+                {% if item.expiry < today %}
+                    <span class="expired">❌ Expired</span>
+                {% elif item.expiry == today %}
+                    <span class="today">⚠️ Expires Today</span>
+                {% else %}
+                    <span class="fresh">✅ Fresh</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('delete_item', item_id=item.id) }}" class="delete-btn">🗑️ Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>
+
